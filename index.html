@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Actuaquiz België</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--fg:#1d1d1b;--muted:#6b6a64;--line:#e2dfd6;--accent:#c8102e;--accent-fg:#fff;--ok:#1b7a43;--ok-bg:#e4f4ea;--bad:#b3261e;--bad-bg:#fbe9e7;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171716;--card:#232321;--fg:#f1efe8;--muted:#a09e95;--line:#3a3935;--accent:#ff4d62;--accent-fg:#1a0004;--ok:#6fd49a;--ok-bg:#16301f;--bad:#ff8d85;--bad-bg:#3a1b19;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#171716;--card:#232321;--fg:#f1efe8;--muted:#a09e95;--line:#3a3935;--accent:#ff4d62;--accent-fg:#1a0004;--ok:#6fd49a;--ok-bg:#16301f;--bad:#ff8d85;--bad-bg:#3a1b19;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.55 Georgia,"Times New Roman",serif;min-height:100vh}
+main{max-width:640px;margin:0 auto;padding:28px 18px 48px}
+h1{font-size:2rem;line-height:1.15;margin:.2em 0 .4em}
+.kicker{font:600 .75rem/1 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.muted{color:var(--muted)}
+.ui{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:10px 0 20px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.meta{display:flex;justify-content:space-between;font:.85rem system-ui,sans-serif;color:var(--muted)}
+.q{font-size:1.3rem;line-height:1.4;margin:.3em 0 .5em}
+.hint{font:.85rem system-ui,sans-serif;color:var(--muted);margin:0 0 14px}
+input[type=text]{width:100%;font:1.1rem system-ui,sans-serif;padding:13px 14px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
+input[type=text]:focus{outline:none;border-color:var(--accent)}
+input[type=text]:disabled{opacity:.7}
+.row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+button{font:600 1rem system-ui,sans-serif;padding:12px 18px;border-radius:10px;border:2px solid var(--accent);background:var(--accent);color:var(--accent-fg);cursor:pointer}
+button.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+button:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+.fb{margin-top:16px;padding:14px 16px;border-radius:10px;font:.98rem/1.5 system-ui,sans-serif}
+.fb.ok{background:var(--ok-bg);color:var(--ok)}
+.fb.bad{background:var(--bad-bg);color:var(--bad)}
+.fb b{display:block;font-size:1.05rem;margin-bottom:2px}
+.fb p{margin:.3em 0;color:var(--fg)}
+.fb a{color:inherit;font-weight:600}
+.big{font-size:3rem;font-weight:700;margin:.1em 0}
+ol.rev{padding-left:1.2em;font:.92rem/1.5 system-ui,sans-serif}
+ol.rev li{margin:.5em 0}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<div class="kicker ui">Actuaquiz · Belgisch nieuws</div>
+
+<section id="start">
+  <h1>Hoe goed volg jij het nieuws?</h1>
+  <div class="card">
+    <p>100 open vragen over de actualiteit tussen <b>24 juli</b> en <b>24 oktober 2026</b>. Geen meerkeuze: typ zelf je antwoord en je ziet meteen of het klopt. Extra veel vragen gaan over namen en plaatsen.</p>
+    <p class="muted ui" style="font-size:.9rem">Alle vragen zijn gebaseerd op Belgische nieuwssites (VRT NWS, Sporza, The Brussels Times). Bij een fout antwoord zie je de juiste oplossing én de bron.</p>
+    <div class="row"><button id="go">Start de quiz</button></div>
+  </div>
+</section>
+
+<section id="quiz" class="hide">
+  <div class="meta"><span id="num"></span><span id="score"></span></div>
+  <div class="bar"><i id="prog"></i></div>
+  <div class="card">
+    <div class="muted ui" id="date" style="font-size:.85rem"></div>
+    <p class="q" id="qtext"></p>
+    <p class="hint" id="hint"></p>
+    <input type="text" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Jouw antwoord" placeholder="Typ je antwoord…">
+    <div class="row">
+      <button id="check">Controleer</button>
+      <button id="skip" class="ghost">Ik weet het niet</button>
+      <button id="next" class="hide">Volgende vraag</button>
+    </div>
+    <div id="fb" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="end" class="hide">
+  <h1>Klaar!</h1>
+  <div class="card">
+    <div class="big" id="final"></div>
+    <p id="verdict"></p>
+    <ol class="rev" id="rev"></ol>
+    <div class="row"><button id="again">Opnieuw spelen</button></div>
+  </div>
+</section>
+</main>
+
+<script>
+const Q=[
+{d:"12 augustus 2026",q:"Op 12 augustus trok een zonsverduistering over ons land. Hoeveel procent van de zon verdween ongeveer achter de maan?",h:"Antwoord in procent",a:["90"],full:"Ongeveer 90 procent",ex:"Het was de grootste eclips in België sinds 1999.",s:["VRT NWS: 10 momenten van zomer 2026","https://www.vrt.be/vrtnws/nl/2026/08/24/10-momenten-van-zomer-2026/"]},
+{d:"14 augustus 2026",q:"Tijdens de derde hittegolf van de zomer werd op 14 augustus in Ukkel een warmterecord gemeten. Hoeveel graden Celsius was het?",h:"Antwoord met één cijfer na de komma",a:["35.9"],full:"35,9 °C",ex:"Die temperatuur werd gemeten op vrijdag 14 augustus.",s:["VRT NWS: 10 momenten van zomer 2026","https://www.vrt.be/vrtnws/nl/2026/08/24/10-momenten-van-zomer-2026/"]},
+{d:"14 augustus 2026",q:"Bij gasexplosies in een gebouw aan de Treurenberg in Brussel kwam op 14 augustus een brandweerman om het leven. Wat is zijn familienaam?",h:"Achternaam volstaat",a:["francotte","olivier francotte"],full:"Olivier Francotte",ex:"Hij kreeg op 24 augustus een staatsbegrafenis in de basiliek van Koekelberg.",s:["The Brussels Times: Final tribute to Brussels firefighter Olivier Francotte","https://www.brusselstimes.com/2285335/final-tribute-to-brussels-firefighter-olivier-francotte-at-koekelberg-basilica"]},
+{d:"September 2026",q:"Wie maakte in september zijn debuut als bondscoach van de Rode Duivels, met meteen vier interlands in elf dagen?",h:"Voor- en achternaam",a:["mark van bommel","van bommel","vanbommel"],full:"Mark van Bommel",ex:"Zijn eerste selectie voor de Nations League werd op 15 september bekendgemaakt.",s:["Sporza: Het pittige Duivels-debuut van Mark van Bommel","https://sporza.be/nl/2026/09/15/meteen-4-krakers-in-11-dagen-het-pittige-duivels-debuut-van-mark-van-bommel-in-nations-league~1789462658017/"]},
+{d:"6 oktober 2026",q:"De Nobelprijs voor Natuurkunde ging naar de Belg Francis Halzen. Uit welke Vlaamse stad komt hij?",h:"Naam van de stad",a:["tienen"],full:"Tienen",ex:"Halzen kreeg de prijs als enige laureaat voor zijn werk rond de IceCube-neutrinodetector op de Zuidpool.",s:["VRT NWS liveblog: Francis Halzen uit Tienen wint de Nobelprijs voor Fysica","https://www.vrt.be/vrtnws/nl/liveblog/francis-halzen-ik-wil-zo-lang-mogelijk-op-hotelkamer-blijven-~1759742249381/"]},
+{d:"13 oktober 2026",q:"In welke Brusselse gemeente werd politieagent Nordine El Talbi (41) tijdens een interventie doodgeschoten?",h:"Naam van de gemeente",a:["jette"],full:"Jette",ex:"Duizenden mensen namen afscheid van de agent, die postuum een Burgerlijk Kruis 1ste Klasse kreeg.",s:["VRT NWS liveblog: dood van agent laat diepe sporen na","https://www.vrt.be/vrtnws/nl/liveblog/dood-van-agent-laat-diepe-sporen-na-bij-politie-collegas-moes~1791870783608/"]},
+{d:"13 oktober 2026",q:"Club Brugge speelde in de Champions League een spektakelwedstrijd op het veld van Inter. Wat was de einduitslag?",h:"Antwoord als twee cijfers, bv. 1-1",a:["4 3","3 4"],full:"3-4 (Club Brugge won)",ex:"Het was de eerste punten van Club Brugge in deze Champions League-campagne.",s:["Sporza: Ivan Leko na de 3-4-zege bij Inter","https://sporza.be/nl/2026/10/13/na-een-van-de-mooiste-momenten-uit-zijn-carriere-waarschuwt-ivan-leko-concurrentie-dit-betekent-niet-dat-je-barca-bent~1791926887012/"]},
+{d:"Oktober 2026",q:"Tot hoeveel jaar opsluiting veroordeelde het hof van assisen in Gent Dave De Kock voor de dood van kleuter Dean?",h:"Aantal jaar",a:["30","dertig"],full:"30 jaar",ex:"Dat is de maximumstraf voor doodslag. Zijn ex-vriendin Romy W. werd vrijgesproken voor ontvoering.",s:["VRT NWS liveblog: Dave De Kock veroordeeld tot 30 jaar cel","https://www.vrt.be/vrtnws/nl/liveblog/dave-de-kock-veroordeeld-tot-30-jaar-cel-romy-w-krijgt-opschor~1791388401335/"]},
+{d:"15 oktober 2026",q:"Wie kreeg dit jaar de Nationale Trofee voor Sportverdienste?",h:"Voor- en/of achternaam",a:["sarah chaari","chaari"],full:"Sarah Chaari",ex:"De taekwondoka (21) won onder meer het EK en het WK.",s:["Sporza: Taekwondoka Sarah Chaari krijgt Nationale Trofee voor Sportverdienste","https://sporza.be/nl/2026/10/15/taekwondoka-sarah-chaari-krijgt-nationale-trofee-voor-sportverdienste~1792049338262/"]},
+{d:"Oktober 2026",q:"Met zijn nieuwe begrotingsvoorstel wil premier De Wever vermijden dat de regering volgend jaar met een noodbegroting moet starten. Hoe heet dat systeem?",h:"Twee woorden",a:["voorlopige twaalfden","twaalfden","voorlopige 12den","voorlopige twaalfde"],full:"Voorlopige twaalfden",ex:"Daarbij mag de overheid maandelijks een twaalfde van het vorige budget uitgeven. Ook 2026 begon al zo.",s:["VRT NWS liveblog: De Wever schrapt btw in nieuw begrotingsvoorstel","https://www.vrt.be/vrtnws/nl/liveblog/de-wever-schrapt-btw-in-nieuw-begrotingsvoorstel-focus-ligt-op-~1790599460224/"]},
+{d:"19 oktober 2026",q:"Carl Decaluwé ging met pensioen als gouverneur van West-Vlaanderen. Welke partij mag zijn opvolger aanduiden nadat CD&V haar aanspraken liet vallen?",h:"Naam van de partij",a:["vooruit"],full:"Vooruit",ex:"Tot dan nam Decaluwés kabinetschef Koen Surdiacourt het ambt waar.",s:["VRT NWS: Vooruit zal nieuwe gouverneur van West-Vlaanderen aanduiden","https://www.vrt.be/vrtnws/nl/2026/10/19/gouverneur-west-vlaanderen-cd-v-vooruit-gouverneurschap/"]},
+{d:"22 oktober 2026",q:"Dit weekend gaan de klokken terug naar de wintertijd. Met hoeveel procent stijgt volgens verkeersinstituut Vias het aantal ernstige ongevallen met voetgangers daarna?",h:"Antwoord in procent",a:["73"],full:"73 procent",ex:"Vooral de avondspits is een risicomoment omdat de zichtbaarheid vermindert.",s:["VRT NWS: Pas op in de avondspits na de overgang naar wintertijd","https://vrt.be/vrtnws/nl/2026/10/22/wintertijd-aantal-ernstige-ongevallen-met-voetgangers-stijgt-me"]}
+];
+Q.push(
+{d:"26 juli 2026",q:"Wie won de slotrit van de Tour de France in Parijs?",h:"Voor- en achternaam",a:["mathieu van der poel","van der poel"],full:"Mathieu van der Poel",s:["Sporza: eindklassementen Tour 2026","https://sporza.be/nl/2026/07/26/geel-groen-bollen-en-wit-alle-eindklassementen-van-de-tour-de-france-2026-op-een-rijtje~1785080923452/"]},
+{d:"26 juli 2026",q:"Welke Belg werd tweede in het eindklassement van de Tour de France, achter Tadej Pogacar?",h:"Voor- en/of achternaam",a:["remco evenepoel","evenepoel"],full:"Remco Evenepoel",s:["Sporza: eindklassementen Tour 2026","https://sporza.be/nl/2026/07/26/geel-groen-bollen-en-wit-alle-eindklassementen-van-de-tour-de-france-2026-op-een-rijtje~1785080923452/"]},
+{d:"26 juli 2026",q:"Wie won de groene trui (puntenklassement) in de Tour de France 2026?",h:"Voor- en/of achternaam",a:["mads pedersen","pedersen"],full:"Mads Pedersen",s:["Sporza: eindklassementen Tour 2026","https://sporza.be/nl/2026/07/26/geel-groen-bollen-en-wit-alle-eindklassementen-van-de-tour-de-france-2026-op-een-rijtje~1785080923452/"]},
+{d:"27 juli 2026",q:"In welke stad spelen de Rode Duivels op 2 oktober thuis tegen Turkije, in het stadion van Standard?",h:"Naam van de stad",a:["luik","liege","sclessin"],full:"Luik (Sclessin)",s:["Sporza: Duivels-Turkije wordt gespeeld op Sclessin","https://sporza.be/nl/2026/07/27/nations-league-duel-van-rode-duivels-tegen-turkije-wordt-gespeeld-op-sclessin~1785150611916/"]},
+{d:"6 augustus 2026",q:"Bij welk dier werd in augustus het eerste geval van het westnijlvirus in België vastgesteld?",h:"Eén woord",a:["paard"],full:"Een paard",s:["VRT NWS: Westnijlvirus bij paard in België vastgesteld","https://www.vrt.be/vrtnws/nl/2026/08/06/westnijlvirus-bij-paard-in-belgie-vastgesteld/"]},
+{d:"14 augustus 2026",q:"Welk natuurgebied in het oosten van België werd vanaf 14 augustus geteisterd door een enorme veenbrand?",h:"Naam van het natuurgebied",a:["hoge venen","hautes fagnes"],full:"De Hoge Venen",s:["VRT NWS liveblog: Hoge Venen","https://www.vrt.be/vrtnws/nl/liveblog/brandweer-bestrijdt-heropflakkeringen-in-de-hoge-venen-~1787109504614/"]},
+{d:"Augustus 2026",q:"Ongeveer hoeveel hectare natuurgebied ging in de Hoge Venen in vlammen op?",h:"Antwoord in hectare",a:["3000","3.000","3 000"],full:"Ruim 3.000 hectare",s:["VRT NWS liveblog: Hoge Venen","https://www.vrt.be/vrtnws/nl/liveblog/brandweer-bestrijdt-heropflakkeringen-in-de-hoge-venen-~1787109504614/"]},
+{d:"Augustus 2026",q:"Welk gehucht bij de Hoge Venen werd deels geëvacueerd door de brand?",h:"Naam van het gehucht",a:["sourbrodt"],full:"Sourbrodt",s:["VRT NWS liveblog: dichte rook bemoeilijkt blushelikopters","https://www.vrt.be/vrtnws/nl/liveblog/dichte-rook-bemoeilijkt-blushelikopters-om-water-te-tanken~1785314118283/"]},
+{d:"Augustus 2026",q:"Welke federale minister van Binnenlandse Zaken (MR) overlegde met alle gouverneurs over de natuurbrand?",h:"Voor- en/of achternaam",a:["bernard quintin","quintin"],full:"Bernard Quintin",s:["VRT NWS liveblog: dichte rook bemoeilijkt blushelikopters","https://www.vrt.be/vrtnws/nl/liveblog/dichte-rook-bemoeilijkt-blushelikopters-om-water-te-tanken~1785314118283/"]},
+{d:"Augustus 2026",q:"Welke Belgische Eurocommissaris bezocht het getroffen gebied in de Hoge Venen?",h:"Voor- en/of achternaam",a:["hadja lahbib","lahbib"],full:"Hadja Lahbib",s:["VRT NWS liveblog: Hoge Venen","https://www.vrt.be/vrtnws/nl/liveblog/brandweer-bestrijdt-heropflakkeringen-in-de-hoge-venen-~1787109504614/"]},
+{d:"27 augustus 2026",q:"Welke Waalse minister-president reageerde op de vraag wie verantwoordelijk is voor de brand in de Hoge Venen?",h:"Achternaam volstaat",a:["dolimont","adrien dolimont"],full:"Adrien Dolimont",s:["VRT NWS dossier: Natuurbranden","https://www.vrt.be/vrtnws/nl/dossiers/2026/07/natuurbranden.consumer/"]},
+{d:"16 september 2026",q:"Welke federale minister wil Defensie beter uitrusten tegen bosbranden, onder meer met bambi buckets en zware helikopters?",h:"Voor- en/of achternaam",a:["theo francken","francken"],full:"Theo Francken",s:["VRT NWS dossier: Natuurbranden","https://www.vrt.be/vrtnws/nl/dossiers/2026/07/natuurbranden.consumer/"]},
+{d:"Augustus 2026",q:"Welke Amerikaanse rapper sloot op de laatste dag het hoofdpodium van Pukkelpop 2026 af?",h:"Artiestennaam",a:["tyler the creator","tyler"],full:"Tyler, the Creator",s:["VRT NWS liveblog: Pukkelpop zit erop","https://www.vrt.be/vrtnws/nl/liveblog/pukkelpop-zit-erop-tyler-the-creator-sluit-hoofdpodium-af~1787478499106/"]},
+{d:"Augustus 2026",q:"In welke deelgemeente van Hasselt vindt Pukkelpop plaats?",h:"Naam van de deelgemeente",a:["kiewit"],full:"Kiewit",s:["VRT NWS liveblog: Pukkelpop zit erop","https://www.vrt.be/vrtnws/nl/liveblog/pukkelpop-zit-erop-tyler-the-creator-sluit-hoofdpodium-af~1787478499106/"]},
+{d:"Augustus 2026",q:"Welke artiest stond met een gebroken been als headliner op de tweede dag van Pukkelpop?",h:"Artiestennaam",a:["yungblud"],full:"Yungblud",s:["VRT NWS liveblog: Pukkelpop dag 2","https://www.vrt.be/vrtnws/nl/liveblog/merol-scoort-met-outfit-van-de-dag-headliner-yungblud-zet-pukke~1787307081164/"]},
+{d:"13 september 2026",q:"In welke Spaanse stad eindigde de Vuelta 2026, in plaats van in Madrid?",h:"Naam van de stad",a:["granada"],full:"Granada",s:["Sporza: Vuelta 2026, rit 21 live","https://sporza.be/nl/matches/wielrennen/vuelta-a-espana/2026/vuelta-a-espana-2026-rit-21-live-1620u-vuelta-organisatie-neutraliseert-dan-toch-de-laatste-lokale-ronde-in-de-slotrit-in-granada~1759432501462/"]},
+{d:"13 september 2026",q:"Welke Belg won de groene trui in de Vuelta 2026?",h:"Voor- en/of achternaam",a:["wout van aert","van aert"],full:"Wout van Aert",s:["Sporza: Vuelta 2026, rit 21 live","https://sporza.be/nl/matches/wielrennen/vuelta-a-espana/2026/vuelta-a-espana-2026-rit-21-live-1620u-vuelta-organisatie-neutraliseert-dan-toch-de-laatste-lokale-ronde-in-de-slotrit-in-granada~1759432501462/"]},
+{d:"22 september 2026",q:"In welke stad wordt de European Open tennis gespeeld, nadat het toernooi negen jaar in Antwerpen plaatsvond?",h:"Naam van de stad",a:["brussel","bruxelles"],full:"Brussel",s:["Sporza: dubbele boeking dwingt European Open tot verhuis","https://sporza.be/nl/2026/09/22/franse-rappers-jagen-european-open-op-kosten-dubbele-boeking-dwingt-tennistoernooi-tot-verhuis-met-duur-prijskaartje~1790086070139/"]},
+{d:"22 september 2026",q:"Welke Belgische tennisicoon neemt dit jaar afscheid op de European Open?",h:"Voor- en/of achternaam",a:["david goffin","goffin"],full:"David Goffin",s:["Sporza: dubbele boeking dwingt European Open tot verhuis","https://sporza.be/nl/2026/09/22/franse-rappers-jagen-european-open-op-kosten-dubbele-boeking-dwingt-tennistoernooi-tot-verhuis-met-duur-prijskaartje~1790086070139/"]},
+{d:"5 oktober 2026",q:"Wie bracht de Rode Duivels in Parijs op voorsprong tegen Frankrijk, voor de Fransen nog met 4-1 wonnen?",h:"Achternaam volstaat",a:["lukebakio","dodi lukebakio"],full:"Dodi Lukebakio",s:["Sporza: Frankrijk-België, pijnlijk slotkwartier","https://sporza.be/nl/sport/voetbal/~3337832/"]},
+{d:"13 oktober 2026",q:"Welke trainer leidt Club Brugge, dat bij Inter won in de Champions League?",h:"Achternaam volstaat",a:["ivan leko","leko"],full:"Ivan Leko",s:["Sporza: Leko na de zege bij Inter","https://sporza.be/nl/2026/10/13/na-een-van-de-mooiste-momenten-uit-zijn-carriere-waarschuwt-ivan-leko-concurrentie-dit-betekent-niet-dat-je-barca-bent~1791926887012/"]},
+{d:"14 oktober 2026",q:"Welke Zwitserse doelman, voorheen bij Inter, staat nu onder de lat bij Club Brugge?",h:"Achternaam volstaat",a:["yann sommer","sommer"],full:"Yann Sommer",s:["Sporza: Boudeweel bekomt van spektakel in Milaan","https://sporza.be/nl/2026/10/14/-deze-stunt-is-toch-anders-tom-boudeweel-bekomt-van-spektakel-in-milaan-met-ode-aan-duo-uitblinkers-naast-tresoldi~1791960657660/"]},
+{d:"12 oktober 2026",q:"In welke Chinese stad werd het WK baanwielrennen 2026 gehouden?",h:"Naam van de stad",a:["shanghai"],full:"Shanghai",s:["Sporza: livestream WK baanwielrennen","https://sporza.be/nl/2026/10/12/livestream-1130-u-wk-baanwielrennen-schitteren-kopecky-en-bossuyt-in-de-ploegkoers-en-blijft-van-den-bossche-op-medaillekoers~1791800206649/"]},
+{d:"15 oktober 2026",q:"Welke Belgische werd voor de derde keer wereldkampioene in de afvallingskoers op het WK baanwielrennen?",h:"Voor- en/of achternaam",a:["lotte kopecky","kopecky"],full:"Lotte Kopecky",s:["Sporza: Kopecky pakt eerste Belgische medaille","https://sporza.be/nl/2026/10/12/livestream-wk-baanwielrennen-11-uur-rijdt-specialiste-lotte-kopecky-naar-3e-wereldtitel-in-afvallingskoers~1791798576658/"]},
+{d:"6 oktober 2026",q:"Welke Belgische is secretaris-generaal van de Koninklijke Zweedse Academie van Wetenschappen en maakte als eerste Belg de Nobelprijs Fysica bekend?",h:"Voor- en/of achternaam",a:["ellen moons","moons"],full:"Ellen Moons",s:["VRT NWS liveblog: Francis Halzen wint de Nobelprijs","https://www.vrt.be/vrtnws/nl/liveblog/francis-halzen-ik-wil-zo-lang-mogelijk-op-hotelkamer-blijven-~1759742249381/"]},
+{d:"6 oktober 2026",q:"Welke federale minister van Wetenschapsbeleid (Les Engagés) reageerde verheugd op de Nobelprijs voor Francis Halzen?",h:"Voor- en/of achternaam",a:["vanessa matz","matz"],full:"Vanessa Matz",s:["VRT NWS liveblog: Francis Halzen wint de Nobelprijs","https://www.vrt.be/vrtnws/nl/liveblog/francis-halzen-ik-wil-zo-lang-mogelijk-op-hotelkamer-blijven-~1759742249381/"]},
+{d:"6 oktober 2026",q:"Welke Vlaamse minister-president (N-VA) reageerde op X enthousiast op de Nobelprijs voor Halzen?",h:"Voor- en/of achternaam",a:["matthias diependaele","diependaele"],full:"Matthias Diependaele",s:["VRT NWS liveblog: Francis Halzen wint de Nobelprijs","https://www.vrt.be/vrtnws/nl/liveblog/francis-halzen-ik-wil-zo-lang-mogelijk-op-hotelkamer-blijven-~1759742249381/"]},
+{d:"Oktober 2026",q:"Wie nam als kabinetschef van Carl Decaluwé tijdelijk het gouverneurschap van West-Vlaanderen waar?",h:"Voor- en/of achternaam",a:["koen surdiacourt","surdiacourt"],full:"Koen Surdiacourt",s:["VRT NWS: Vooruit zal nieuwe gouverneur aanduiden","https://www.vrt.be/vrtnws/nl/2026/10/19/gouverneur-west-vlaanderen-cd-v-vooruit-gouverneurschap/"]},
+{d:"Oktober 2026",q:"Welke Vlaamse viceminister-president (CD&V) kreeg in het Vlaams Parlement vragen over het gouverneurschap in West-Vlaanderen?",h:"Voor- en/of achternaam",a:["hilde crevits","crevits"],full:"Hilde Crevits",s:["VRT NWS liveblog: minister Crevits in Vlaams Parlement","https://www.vrt.be/vrtnws/nl/liveblog/bent-u-kandidaat-minister-crevits-krijgt-in-vlaams-parlement-~1790599460224/"]},
+{d:"Oktober 2026",q:"Welke MR-voorzitter blijft zich verzetten tegen een btw-verhoging in de federale begrotingsgesprekken?",h:"Voor- en/of achternaam",a:["georges louis bouchez","bouchez"],full:"Georges-Louis Bouchez",s:["VRT NWS liveblog: De Wever schrapt btw in nieuw voorstel","https://www.vrt.be/vrtnws/nl/liveblog/de-wever-schrapt-btw-in-nieuw-begrotingsvoorstel-focus-ligt-op-~1790599460224/"]},
+{d:"Oktober 2026",q:"Welke Vooruit-minister was om 11 uur als eerste aan de beurt toen de federale begrotingsgesprekken werden hervat?",h:"Voor- en/of achternaam",a:["frank vandenbroucke","vandenbroucke"],full:"Frank Vandenbroucke",s:["VRT NWS liveblog: De Wever schrapt btw in nieuw voorstel","https://www.vrt.be/vrtnws/nl/liveblog/de-wever-schrapt-btw-in-nieuw-begrotingsvoorstel-focus-ligt-op-~1790599460224/"]},
+{d:"Oktober 2026",q:"Op welk werkeiland in Zeeland werd het lichaam van kleuter Dean teruggevonden?",h:"Naam van het werkeiland",a:["neeltje jans"],full:"Neeltje Jans",s:["VRT NWS: Assisenproces Dean start in Gent","https://www.vrt.be/vrtnws/nl/2026/10/07/assisenproces-dean-start-gent/"]},
+{d:"Oktober 2026",q:"Welke bekende strafpleiter verdedigde de moeder van Dean op het assisenproces in Gent?",h:"Achternaam volstaat",a:["jef vermassen","vermassen"],full:"Jef Vermassen",s:["VRT NWS: Assisenproces Dean start in Gent","https://www.vrt.be/vrtnws/nl/2026/10/07/assisenproces-dean-start-gent/"]},
+{d:"18 oktober 2026",q:"Dertig jaar geleden trok de Witte Mars door Brussel. Welke zaak was de aanleiding?",h:"Achternaam volstaat",a:["dutroux","zaak dutroux","marc dutroux"],full:"De zaak-Dutroux",s:["VRT NWS: Witte Mars herdacht in Gent","https://www.vrt.be/vrtnws/nl/2026/10/18/gent-witte-mars-herdenking-belfort-kinderrechtenplein/"]},
+{d:"18 oktober 2026",q:"Hoeveel mensen stapten op 20 oktober 1996 mee in de Witte Mars in Brussel?",h:"Antwoord in cijfers",a:["300000","300.000","300 000"],full:"300.000",s:["VRT NWS: Witte Mars herdacht in Gent","https://www.vrt.be/vrtnws/nl/2026/10/18/gent-witte-mars-herdenking-belfort-kinderrechtenplein/"]},
+{d:"15 oktober 2026",q:"Hoeveel mensen zijn in Vlaanderen overleden na een besmetting met het westnijlvirus (stand van 15 oktober)?",h:"Antwoord in cijfers",a:["2","twee"],full:"2 (bij 14 bevestigde besmettingen)",s:["VRT NWS: Twee overlijdens door westnijlvirus","https://www.vrt.be/vrtnws/nl/2026/10/15/overlijdens-westnijlvirus/"]},
+{d:"Augustus 2026",q:"Wie is de minister-president van het Brussels Hoofdstedelijk Gewest (MR) die een staatsbegrafenis voor de omgekomen brandweerman aankondigde?",h:"Voor- en/of achternaam",a:["boris dilliès","boris dillies","dillies"],full:"Boris Dilliès",s:["The Brussels Times: staatsbegrafenis voor brandweerman","https://www.brusselstimes.com/2278499/firefighter-who-died-in-gas-explosion-brussels-to-receive-state-funeral-tbtb"]}
+);
+const VRT="VRT NWS",A="https://www.vrt.be/vrtnws/nl/liveblog/dichte-rook-bemoeilijkt-blushelikopters-om-water-te-tanken~1785314118283/",B="https://www.vrt.be/vrtnws/nl/liveblog/vannacht-opflakkeringen-in-het-oosten-van-hoge-venen-rook-en-~1785314118283/",D="https://www.vrt.be/vrtnws/nl/liveblog/brandweer-bestrijdt-heropflakkeringen-in-de-hoge-venen-~1787109504614/",E="https://www.vrt.be/vrtnws/nl/dossiers/2026/07/natuurbranden.consumer/",K="https://www.vrt.be/vrtnws/nl/liveblog/pukkelpop-zit-erop-tyler-the-creator-sluit-hoofdpodium-af~1787478499106/",L="https://www.vrt.be/vrtnws/nl/liveblog/merol-scoort-met-outfit-van-de-dag-headliner-yungblud-zet-pukke~1787307081164/",TR="https://sporza.be/nl/2026/07/26/geel-groen-bollen-en-wit-alle-eindklassementen-van-de-tour-de-france-2026-op-een-rijtje~1785080923452/",WK="https://sporza.be/nl/2026/10/12/livestream-1130-u-wk-baanwielrennen-schitteren-kopecky-en-bossuyt-in-de-ploegkoers-en-blijft-van-den-bossche-op-medaillekoers~1791800206649/",HZ="https://www.vrt.be/vrtnws/nl/liveblog/francis-halzen-ik-wil-zo-lang-mogelijk-op-hotelkamer-blijven-~1759742249381/",FB="https://www.forbes.be/nl/nobelprijs-voor-natuurkunde-2026-gaat-naar-belg-francis-halzen-voor-icecube/",JE="https://www.vrt.be/vrtnws/nl/liveblog/enorm-veel-steunbetuigingen-agenten-uit-hele-land-herdenken-o~1791870783608/",DK="https://www.vrt.be/vrtnws/nl/liveblog/dave-de-kock-veroordeeld-tot-30-jaar-cel-romy-w-krijgt-opschor~1791388401335/",FW="https://www.vrt.be/vrtnws/nl/liveblog/de-wever-schrapt-btw-in-nieuw-begrotingsvoorstel-focus-ligt-op-~1790599460224/",BT="https://www.vrt.be/vrtnws/nl/liveblog/ministers-komen-en-gaan-voor-1op1-gesprekken-met-de-wever-over~1790599460224/";
+Q.push(
+{d:"Augustus 2026",q:"Een blusvliegtuig vulde zijn tanks op het stuwmeer van welke Oost-Belgische stad om de brand in de Hoge Venen te bestrijden?",a:["eupen"],full:"Eupen",s:[VRT+" liveblog: Hoge Venen",A]},
+{d:"Augustus 2026",q:"Naar welk Duits stadje vlak over de grens breidde de Hoge Venen-brand zich uit door de wind?",a:["monschau"],full:"Monschau",s:[VRT+" liveblog: Hoge Venen",B]},
+{d:"Augustus 2026",q:"Op het vliegveld van welke Waalse stad stond de VRT NWS-journaliste tijdens de bluswerken?",a:["spa"],full:"Spa",s:[VRT+" liveblog: Hoge Venen","https://www.vrt.be/vrtnws/nl/liveblog/brand-breidt-voorlopig-niet-uit-maar-zodra-regen-stopt-flakke~1785314118283/"]},
+{d:"Augustus 2026",q:"Welke gemeente raadde zijn inwoners aan om binnen te blijven door de rook van de Hoge Venen-brand?",a:["malmedy"],full:"Malmedy",s:[VRT+" liveblog: Hoge Venen",B]},
+{d:"Augustus 2026",q:"Welk type transporthelikopter stuurde Nederland (twee stuks) om de brand in de Hoge Venen te blussen?",h:"Typenaam",a:["chinook"],full:"Chinook",s:[VRT+" liveblog: Hoge Venen",A]},
+{d:"Augustus 2026",q:"Welke werkzaamheden met een landbouwmachine hebben mogelijk de brand in de Hoge Venen veroorzaakt, volgens RTBF?",a:["maaiwerken","maaien"],full:"Maaiwerken",s:[VRT+" liveblog: Hoge Venen",D]},
+{d:"30 september 2026",q:"De rook van de Hoge Venen-brand reikte tot in Oostenrijk en nog een ander land. Welk?",a:["polen"],full:"Polen",s:[VRT+" dossier: Natuurbranden",E]},
+{d:"10 september 2026",q:"Hoe heet het systeem waarmee Vlaanderen natuurbranden onmiddellijk wil detecteren en dat nu getest wordt?",a:["vlaams vuurschild","vuurschild"],full:"Het Vlaams Vuurschild",s:[VRT+" dossier: Natuurbranden",E]},
+{d:"24 augustus 2026",q:"Hoeveel natuurbranden telden UGent-onderzoekers in België tegen 17 augustus?",h:"Antwoord in cijfers",a:["234"],full:"234",s:[VRT+": 10 momenten van zomer 2026","https://www.vrt.be/vrtnws/nl/2026/08/24/10-momenten-van-zomer-2026/"]},
+{d:"12 augustus 2026",q:"De zonsverduistering van 12 augustus was de grootste in ons land sinds welk jaar?",h:"Jaartal",a:["1999"],full:"1999",s:[VRT+": 10 momenten van zomer 2026","https://www.vrt.be/vrtnws/nl/2026/08/24/10-momenten-van-zomer-2026/"]},
+{d:"22 augustus 2026",q:"In welk Balkanland eiste een epidemie van het westnijlvirus al zeker 5 mensenlevens?",a:["noord macedonie","macedonie"],full:"Noord-Macedonië",s:[VRT+": Westnijlvirus in Noord-Macedonië","https://www.vrt.be/vrtnws/nl/2026/08/22/westnijlvirus-noord-macedonie/"]},
+{d:"26 augustus 2026",q:"In welke Nederlandse provincie overleed een persoon aan het westnijlvirus?",a:["utrecht"],full:"Utrecht",s:[VRT+": Persoon overleden aan westnijlvirus","https://www.vrt.be/vrtnws/nl/2026/08/26/nederland-persoon-overleden-aan-westnijlvirus/"]},
+{d:"10 september 2026",q:"Hoeveel paarden waren begin september in België ziek door het westnijlvirus?",h:"Antwoord in cijfers",a:["25"],full:"25",s:[VRT+": 18 besmettingen in Nederland","https://www.vrt.be/vrtnws/nl/2026/09/10/18-besmettingen-en-3-doden-door-westnijlvirus-in-nederland-bij/"]},
+{d:"Augustus 2026",q:"Hoeveel bezoekers lokte de openingsdag van Pukkelpop 2026?",h:"Antwoord in cijfers",a:["55000","55.000","55 000"],full:"55.000",s:[VRT+": nieuws uit Hasselt","https://www.vrt.be/vrtnws/nl/net-binnen/limburg/hasselt.consumer/"]},
+{d:"Augustus 2026",q:"Welke Belgische zangeres tekende samen met MEAU voor het hoogtepunt van de openingsdag van Pukkelpop?",a:["pommelien thijs","pommelien"],full:"Pommelien Thijs",s:[VRT+": nieuws uit Hasselt","https://www.vrt.be/vrtnws/nl/net-binnen/limburg/hasselt.consumer/"]},
+{d:"Augustus 2026",q:"Welke jarenlange vaste presentator van Pukkelpop zwaaide het publiek uit?",a:["luc janssen","janssen"],full:"Luc Janssen",s:[VRT+" liveblog: Pukkelpop zit erop",K]},
+{d:"Augustus 2026",q:"De hoeveelste editie van Pukkelpop was dit in 2026?",h:"Antwoord in cijfers",a:["41","41e"],full:"De 41e editie",s:[VRT+" liveblog: Pukkelpop zit erop","https://www.vrt.be/vrtnws/nl/liveblog/ise-vervangt-zieke-violet-grohl-eefje-de-visser-neemt-extra-dan~1787478499106/"]},
+{d:"Augustus 2026",q:"Welke Zweedse popster deed op Pukkelpop alle decibelmeters springen met het gegil van het publiek?",a:["zara larsson","larsson"],full:"Zara Larsson",s:[VRT+" liveblog: Pukkelpop zit erop",K]},
+{d:"Augustus 2026",q:"Welke acteur-muzikant (hit ‘End of beginning’) maakte zijn Belgische debuut op de Main Stage van Pukkelpop?",a:["djo"],full:"Djo",s:[VRT+" liveblog: Pukkelpop dag 2",L]},
+{d:"26 juli 2026",q:"Welke renner won het bergklassement (bollentrui) in de Tour de France 2026?",a:["richard carapaz","carapaz"],full:"Richard Carapaz",s:["Sporza: eindklassementen Tour 2026",TR]},
+{d:"26 juli 2026",q:"Wie won het wit van de beste jongere in de Tour de France 2026?",a:["isaac del toro","del toro"],full:"Isaac Del Toro",s:["Sporza: eindklassementen Tour 2026",TR]},
+{d:"26 juli 2026",q:"Welke ploeg was de sterkste in het ploegenklassement van de Tour de France 2026?",a:["lidl trek","lidl"],full:"Lidl-Trek",s:["Sporza: eindklassementen Tour 2026",TR]},
+{d:"22 september 2026",q:"Wie is de toernooidirecteur van de European Open tennis?",a:["dick norman","norman"],full:"Dick Norman",s:["Sporza: European Open verhuist tijdens toernooi","https://sporza.be/nl/2026/09/22/franse-rappers-jagen-european-open-op-kosten-dubbele-boeking-dwingt-tennistoernooi-tot-verhuis-met-duur-prijskaartje~1790086070139/"]},
+{d:"17 oktober 2026",q:"Met welke ploegmaat startte Lotte Kopecky in de ploegkoers op het WK baanwielrennen?",a:["shari bossuyt","bossuyt"],full:"Shari Bossuyt",s:["Sporza: livestream WK baanwielrennen",WK]},
+{d:"17 oktober 2026",q:"Welke Belg reed op het WK baanwielrennen in Shanghai het omnium bij de mannen en bleef lang op medaillekoers?",a:["fabio van den bossche","van den bossche"],full:"Fabio Van den Bossche",s:["Sporza: livestream WK baanwielrennen",WK]},
+{d:"14 oktober 2026",q:"Welke Club-aanvaller was volgens Sporza bij elke goal betrokken in de zege bij Inter?",a:["carlos forbs","forbs"],full:"Carlos Forbs",s:["Sporza: Boudeweel bekomt van spektakel in Milaan","https://sporza.be/nl/2026/10/14/-deze-stunt-is-toch-anders-tom-boudeweel-bekomt-van-spektakel-in-milaan-met-ode-aan-duo-uitblinkers-naast-tresoldi~1791960657660/"]},
+{d:"15 oktober 2026",q:"Naar welke Olympische Spelen kijkt taekwondoka Sarah Chaari, volgens Sporza, als belangrijke atlete van Team Belgium? Geef de stad.",a:["los angeles","la"],full:"Los Angeles (2028)",s:["Sporza: Sarah Chaari krijgt Nationale Trofee","https://sporza.be/nl/2026/10/15/taekwondoka-sarah-chaari-krijgt-nationale-trofee-voor-sportverdienste~1792049338262/"]},
+{d:"15 oktober 2026",q:"Welke voormalige Belgische tafeltennisser lichtte de keuze van de jury voor de Nationale Trofee voor Sportverdienste toe?",a:["jean michel saive","saive"],full:"Jean-Michel Saive",s:["Sporza: Sarah Chaari krijgt Nationale Trofee","https://sporza.be/nl/2026/10/15/taekwondoka-sarah-chaari-krijgt-nationale-trofee-voor-sportverdienste~1792049338262/"]},
+{d:"19 oktober 2026",q:"Welke voormalige Vlaams Parlementslid uit West-Vlaanderen werd genoemd als mogelijke nieuwe gouverneur?",a:["jurgen vanlerberghe","vanlerberghe"],full:"Jurgen Vanlerberghe",s:[VRT+": Vooruit zal nieuwe gouverneur aanduiden","https://www.vrt.be/vrtnws/nl/2026/10/19/gouverneur-west-vlaanderen-cd-v-vooruit-gouverneurschap/"]},
+{d:"6 oktober 2026",q:"Welke Belgische universiteit telt met Francis Halzen een vierde Nobelprijswinnaar onder haar alumni?",a:["ku leuven","leuven"],full:"KU Leuven",s:[VRT+" liveblog: Francis Halzen wint de Nobelprijs",HZ]},
+{d:"6 oktober 2026",q:"Waar bevindt zich de IceCube-neutrinodetector waarvoor Halzen de Nobelprijs kreeg?",a:["zuidpool"],full:"Op de Zuidpool",s:["Forbes Belgium: Nobelprijs voor Natuurkunde 2026",FB]},
+{d:"6 oktober 2026",q:"Hoeveel miljoen Zweedse kronen bedraagt de Nobelprijs voor Natuurkunde 2026?",h:"Antwoord in cijfers",a:["12","twaalf"],full:"12 miljoen Zweedse kronen",s:["Forbes Belgium: Nobelprijs voor Natuurkunde 2026",FB]},
+{d:"6 oktober 2026",q:"Wie was vóór Halzen de eerste Belgische Nobelprijswinnaar voor Natuurkunde, in 2013?",a:["françois englert","francois englert","englert"],full:"François Englert",s:["Forbes Belgium: Nobelprijs voor Natuurkunde 2026",FB]},
+{d:"Oktober 2026",q:"In welk Brussels park namen agenten uit het hele land afscheid van hun overleden collega Nordine El Talbi?",a:["jubelpark"],full:"Het Jubelpark",s:[VRT+" liveblog: afscheid van agent Nordine",JE]},
+{d:"Oktober 2026",q:"In welke Brusselse gemeente werd agent Nordine begraven (Al-Amal-moskee)?",a:["anderlecht"],full:"Anderlecht",s:[VRT+" liveblog: afscheid van agent Nordine","https://www.vrt.be/vrtnws/nl/liveblog/dood-van-agent-laat-diepe-sporen-na-bij-politie-collegas-moes~1791870783608/"]},
+{d:"Oktober 2026",q:"Welk officieel ereteken kreeg de overleden agent postuum?",a:["burgerlijk kruis","burgerlijk kruis 1ste klasse"],full:"Het Burgerlijk Kruis 1ste Klasse",s:[VRT+" liveblog: afscheid van agent Nordine","https://www.vrt.be/vrtnws/nl/liveblog/dood-van-agent-laat-diepe-sporen-na-bij-politie-collegas-moes~1791870783608/"]},
+{d:"Oktober 2026",q:"Een carjacking in welke Waals-Brabantse gemeente leidde de antiovervalbrigade naar Jette?",a:["tubeke","tubize"],full:"Tubeke (Tubize)",s:[VRT+" liveblog: carjacking in Tubeke","https://www.vrt.be/vrtnws/nl/liveblog/carjacking-in-tubeke-leidde-antiovervalbrigade-naar-jette-verd~1791870783608/"]},
+{d:"Oktober 2026",q:"De doodgeschoten agent was al de hoeveelste politieagent in 25 jaar tijd die tijdens de dienst overleed?",h:"Antwoord in cijfers",a:["36","36e"],full:"De 36e",s:[VRT+" liveblog: carjacking in Tubeke","https://www.vrt.be/vrtnws/nl/liveblog/carjacking-in-tubeke-leidde-antiovervalbrigade-naar-jette-verd~1791870783608/"]},
+{d:"Oktober 2026",q:"Hoe oud is Dave De Kock, die tot 30 jaar cel werd veroordeeld?",h:"Antwoord in jaren",a:["39"],full:"39 jaar",s:[VRT+" liveblog: Dave De Kock veroordeeld",DK]},
+{d:"Oktober 2026",q:"Hoe heet de wetsdokter die op het assisenproces over de doodsstrijd van Dean getuigde?",a:["werner jacobs","jacobs"],full:"Werner Jacobs",s:[VRT+" liveblog: autopsie op het proces-Dean","https://www.vrt.be/vrtnws/nl/liveblog/alles-bij-autopsie-wijst-op-erg-zwaar-geweld-dave-de-kock-pinkt~1791388401335/"]},
+{d:"Oktober 2026",q:"Welke straf kreeg Romy W. nadat ze was vrijgesproken voor ontvoering?",h:"Een woord",a:["opschorting","opschorting van straf"],full:"Opschorting van straf",s:[VRT+" liveblog: Dave De Kock veroordeeld",DK]},
+{d:"14 augustus 2026",q:"Welke netbeheerder had twee medewerkers onder de zwaargewonden bij de gasexplosies aan de Treurenberg?",a:["sibelga"],full:"Sibelga",s:[VRT+" English: gas explosion in central Brussels","https://www.vrt.be/vrtnws/en/2026/08/14/three-people-injured-as-gas-pipe-accident-leads-to-explosion-in/"]},
+{d:"14 augustus 2026",q:"Welke Europese instantie is gehuisvest in het getroffen gebouw aan de Treurenberg?",a:["single resolution board","gemeenschappelijke afwikkelingsraad","srb","gar"],full:"De Gemeenschappelijke Afwikkelingsraad (Single Resolution Board)",s:[VRT+" English: gas explosion in central Brussels","https://www.vrt.be/vrtnws/en/2026/08/14/three-people-injured-as-gas-pipe-accident-leads-to-explosion-in/"]},
+{d:"24 augustus 2026",q:"In welke basiliek vond de staatsbegrafenis van brandweerman Olivier Francotte plaats?",h:"Naam van de gemeente of basiliek",a:["koekelberg","basiliek van koekelberg"],full:"De basiliek van Koekelberg",s:["The Brussels Times: Final tribute to Olivier Francotte","https://www.brusselstimes.com/2285335/final-tribute-to-brussels-firefighter-olivier-francotte-at-koekelberg-basilica"]},
+{d:"Oktober 2026",q:"Welke MR-minister noemde na zijn onderhoud met De Wever ook Vooruit bij naam als dwarsligger bij de begrotingsvoorstellen?",a:["clarinval","david clarinval"],full:"David Clarinval",s:[VRT+" liveblog: 1-op-1-gesprekken met De Wever",BT]},
+{d:"Oktober 2026",q:"Welke minister van Buitenlandse Zaken (Les Engagés) loste niets na zijn gesprek met De Wever over de begroting?",a:["maxime prévot","maxime prevot","prevot"],full:"Maxime Prévot",s:[VRT+" liveblog: federale begrotingsgesprekken","https://vrt.be/vrtnws/nl/liveblog/federale-begrotingsgesprekken-traag-maar-constructief-onderha~1790599460224"]},
+{d:"Oktober 2026",q:"Welke N-VA-politica wilde de btw-hervorming niet afserveren tijdens de begrotingsonderhandelingen?",a:["valerie van peel","van peel"],full:"Valerie Van Peel",s:[VRT+" liveblog: De Wever schrapt btw",FW]},
+{d:"Oktober 2026",q:"Welke Wetstraatjournalist zei dat de MR met het nieuwe voorstel van De Wever ‘de buit binnenhaalde’?",a:["ivan de vadder","de vadder"],full:"Ivan De Vadder",s:[VRT+" liveblog: schuldenrem","https://www.vrt.be/vrtnws/nl/liveblog/premier-de-wever-wil-schuldenrem-als-begrotingsakkoord-niet-ti~1790599460224/"]},
+{d:"Oktober 2026",q:"Welke Wetstraatjournalist van VRT NWS duidde dat de premier opnieuw aan zet was met een nieuw voorstel?",a:["benedikte coussement","coussement"],full:"Benedikte Coussement",s:[VRT+" liveblog: btw nog niet van tafel","https://www.vrt.be/vrtnws/nl/liveblog/btw-nog-niet-volledig-van-tafel-in-nieuwste-voorstel-van-de-weve~1790599460224/"]},
+{d:"Oktober 2026",q:"Welke Vooruit-politicus zei dat ze in de begrotingsgesprekken ‘in electorale sfeer’ terechtgekomen waren?",a:["johan vande lanotte","vande lanotte"],full:"Johan Vande Lanotte",s:[VRT+" liveblog: De Wever schrapt btw",FW]}
+);
+(function(){const TM="https://www.vrt.be/vrtnws/nl/liveblog/federale-topministers-zitten-opnieuw-bijeen-om-het-te-hebben-ove~1790599460224/",BN="https://www.vrt.be/vrtnws/nl/liveblog/btw-nog-niet-volledig-van-tafel-in-nieuwste-voorstel-van-de-weve~1790599460224/",OD="https://www.vrt.be/vrtnws/nl/liveblog/openingsdag-lokt-55000-bezoekers-pommelien-thijs-en-meau-teken~1787214104615/",P3="https://www.vrt.be/vrtnws/nl/liveblog/daar-is-pommelien-weer-nu-is-ze-ook-verrassingsgast-bij-the-ato~1787391187350/";
+const P=(k,o)=>{const x=Q.find(z=>z.q.includes(k));if(x)Object.assign(x,o)};
+P("noemde na zijn onderhoud met De Wever",{q:"Welke MR-vicepremier zei dat de ambitie om 10 miljard euro te vinden overeind blijft?",a:["david clarinval","clarinval"],full:"David Clarinval",s:["VRT NWS liveblog: topministers opnieuw bijeen",TM]});
+P("loste niets na zijn gesprek",{q:"Welke vicepremier (Les Engagés) zei dat het voorstel van de ‘schuldenrem’ niet evenwichtig genoeg was?",s:["VRT NWS liveblog: topministers opnieuw bijeen",TM]});
+P("N-VA-politica wilde de btw-hervorming",{q:"Hoeveel miljard euro blijft de ambitie in de federale begrotingsgesprekken, volgens vicepremier Clarinval?",h:"Antwoord in cijfers",a:["10","tien"],full:"10 miljard euro",s:["VRT NWS liveblog: topministers opnieuw bijeen",TM]});
+P("Wetstraatjournalist zei dat de MR",{q:"Naar welk percentage zou het hoogste btw-tarief (nu 21 procent) stijgen in het eerdere voorstel van De Wever, dat nu geschrapt is?",h:"Antwoord in procent",a:["22"],full:"22 procent",s:["VRT NWS liveblog: btw nog niet van tafel",BN]});
+P("in electorale sfeer",{d:"20 augustus 2026",q:"Welke Belgische rockgroep van Tom Barman sloot de openingsdag van Pukkelpop af?",a:["deus"],full:"dEUS",s:["VRT NWS liveblog: openingsdag Pukkelpop",OD]});
+P("tafeltennisser",{d:"Augustus 2026",q:"Welke jonge artieste, verkozen tot BBC Sound of 2026, kreeg op Pukkelpop een magere opkomst in de Wave?",a:["skye newman","newman"],full:"Skye Newman",s:["VRT NWS liveblog: Pukkelpop dag 3",P3]});
+P("acteur-muzikant",{q:"Welke artiest beleefde, samen met de groep IJsland, dit jaar zijn eerste keer op Pukkelpop?",a:["djo"],full:"Djo",s:["VRT NWS liveblog: Pukkelpop dag 3",P3]});
+P("bezoekers lokte de openingsdag",{s:["VRT NWS liveblog: openingsdag Pukkelpop",OD]});
+P("tekende samen met MEAU",{s:["VRT NWS liveblog: openingsdag Pukkelpop",OD]});
+P("ploegmaat startte Lotte Kopecky",{d:"12 oktober 2026"});
+P("omnium bij de mannen",{d:"12 oktober 2026"});
+P("verdedigde de moeder van Dean",{q:"Welke bekende strafpleiter pleitte voor de burgerlijke partij en noemde Dave De Kock ‘een moordenaar’?"});
+})();
+(function(){const P=(k,o)=>{const x=Q.find(z=>z.q.includes(k));if(x)Object.assign(x,o)};
+const VG="https://sporza.be/nl/2026/09/14/wout-van-aert-heelt-zijn-oude-wonden-en-niet-wk-gangers-met-superbenen-het-vuelta-rapport-van-de-belgische-blikvangers~1789380373402/";
+P("vierde Nobelprijswinnaar",{q:"Welke Belgische universiteit feliciteerde haar alumnus Francis Halzen met zijn Nobelprijs voor Natuurkunde?"});
+P("Zweedse kronen",{q:"In welk land was Francis Halzen toen hij het nieuws van zijn Nobelprijs vernam?",h:"Naam van het land",a:["italie"],full:"Italië",s:[VRT+" liveblog: Francis Halzen wint de Nobelprijs",HZ]});
+P("Duits stadje vlak over de grens",{q:"Welk Duits grensstadje werd deels geëvacueerd door de brand in de Hoge Venen?"});
+P("Ongeveer hoeveel hectare",{full:"Ongeveer 3.000 hectare"});
+P("Oostenrijk en nog een ander land",{q:"De rookpluim van de Hoge Venen-brand reikte tot in Oostenrijk, Polen en nog een derde land. Welk?",a:["tsjechie"],full:"Tsjechië",s:[VRT+": rook van natuurbranden tot in België","https://www.vrt.be/vrtnws/nl/2026/09/30/rook-natuurbranden-zuid-europa-tot-in-belgie/"]});
+P("Hoe heet het systeem",{d:"Augustus 2026",q:"Welke minister-president van de Duitstalige Gemeenschap kreeg van Vlaams minister-president Diependaele een aanbod voor hulp bij de brand in de Hoge Venen?",a:["oliver paasch","paasch"],full:"Oliver Paasch",s:[VRT+" liveblog: Hoge Venen","https://www.vrt.be/vrtnws/nl/liveblog/al-meer-dan-2000-hectare-in-de-as-600-mensen-geevacueerd-vuu~1785314118283/"]});
+P("wil Defensie beter uitrusten",{d:"Augustus 2026",q:"Welke N-VA-minister van Defensie wil Chinook-helikopters kopen na de brand in de Hoge Venen?",s:[VRT+" liveblog: Hoge Venen","https://www.vrt.be/vrtnws/nl/liveblog/vuur-breidt-zich-nog-uit-langs-noordoostelijke-kant-koning-fili~1785314118283/"]});
+P("warmterecord gemeten",{q:"Wat was de hoogste temperatuur van de zomer, gemeten op 14 augustus in Ukkel tijdens de derde hittegolf? Antwoord in graden Celsius."});
+P("eerste geval van het westnijlvirus",{q:"Bij welk dier bevestigde het FAVV begin augustus de eerste besmetting met het westnijlvirus in België dit jaar?"});
+P("Hoeveel miljard euro blijft de ambitie",{q:"Welke N-VA-voorzitter wilde de btw-hervorming niet afserveren tijdens de begrotingsonderhandelingen?",h:"Voor- en/of achternaam",a:["valerie van peel","van peel"],full:"Valerie Van Peel",s:[VRT+" liveblog: Van Peel laat btw-hervorming niet los","https://www.vrt.be/vrtnws/nl/liveblog/nvavoorzitter-valerie-van-peel-laat-btwhervorming-niet-los-m~1790599460224/"]});
+P("ploegmaat startte Lotte Kopecky",{d:"17 oktober 2026"});
+P("omnium bij de mannen",{d:"17 oktober 2026",q:"Welke Belg won zilver in het omnium bij de mannen op het WK baanwielrennen in Shanghai?"});
+P("eindigde de Vuelta 2026",{q:"In welke Spaanse stad eindigde de Vuelta 2026?",s:["Sporza: het Vuelta-rapport van de Belgen",VG]});
+P("groene trui in de Vuelta",{s:["Sporza: het Vuelta-rapport van de Belgen",VG]});
+P("debuut als bondscoach",{ex:"Zijn eerste selectie maakte hij op 18 september bekend."});
+P("Naar welke Olympische Spelen kijkt",{q:"Hoe oud is taekwondoka Sarah Chaari, de winnares van de Nationale Trofee voor Sportverdienste 2026?",h:"Antwoord in jaren",a:["21"],full:"21 jaar"});
+})();
+const $=id=>document.getElementById(id);
+let order,i,pts,log,done;
+const norm=t=>t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/(\d),(\d)/g,"$1.$2").replace(/[^a-z0-9.]/g," ").replace(/(^|\s)\.+|\.+(?=\s|$)/g," ").replace(/\s+/g," ").trim();
+function lev(a,b){const m=[...Array(b.length+1).keys()];for(let x=1;x<=a.length;x++){let p=m[0];m[0]=x;for(let y=1;y<=b.length;y++){const t=m[y];m[y]=Math.min(m[y]+1,m[y-1]+1,p+(a[x-1]===b[y-1]?0:1));p=t}}return m[b.length]}
+function ok(u,list){u=norm(u);if(!u)return false;return list.some(a=>{a=norm(a);return u===a||(" "+u+" ").includes(" "+a+" ")||(a.length>=7&&lev(u,a)<=1)})}
+function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function show(id){["start","quiz","end"].forEach(s=>$(s).classList.toggle("hide",s!==id))}
+function begin(){order=shuffle(Q);i=0;pts=0;log=[];show("quiz");load()}
+function load(){const q=order[i];done=false;$("num").textContent="Vraag "+(i+1)+" van "+order.length;$("score").textContent="Score: "+pts;$("prog").style.width=(i/order.length*100)+"%";$("date").textContent=q.d;$("qtext").textContent=q.q;$("hint").textContent=q.h;$("fb").innerHTML="";const a=$("ans");a.value="";a.disabled=false;$("check").classList.remove("hide");$("skip").classList.remove("hide");$("next").classList.add("hide");a.focus()}
+function esc(t){const d=document.createElement("div");d.textContent=t||"";return d.innerHTML}
+function finish(correct,given){if(done)return;done=true;const q=order[i];$("ans").disabled=true;$("check").classList.add("hide");$("skip").classList.add("hide");$("next").classList.remove("hide");if(correct)pts++;log.push({q,correct,given});$("score").textContent="Score: "+pts;
+$("fb").innerHTML=correct?'<div class="fb ok"><b>Juist! ✓</b><p>'+esc(q.full)+'</p><p>'+esc(q.ex)+'</p></div>':'<div class="fb bad"><b>Helaas, dat klopt niet ✗</b><p>Het juiste antwoord: <b style="display:inline">'+esc(q.full)+'</b></p><p>'+esc(q.ex)+'</p><p>Bron: <a href="'+q.s[1]+'" target="_blank" rel="noopener noreferrer">'+esc(q.s[0])+'</a></p></div>';
+$("next").focus()}
+function check(){if(done)return;const v=$("ans").value.trim();if(!v){$("ans").focus();return}finish(ok(v,order[i].a),v)}
+function nextQ(){i++;if(i>=order.length)return end();load()}
+function end(){show("end");$("final").textContent=pts+" / "+order.length;$("verdict").textContent=pts>=80?"Indrukwekkend: je bent echt mee met de actualiteit!":pts>=56?"Sterk gespeeld, je volgt het nieuws goed.":pts>=30?"Niet slecht, maar er valt nog wat bij te leren.":"Tijd om de nieuwssites eens te openen!";
+$("rev").innerHTML=log.map(l=>'<li>'+(l.correct?'✓ ':'✗ ')+esc(l.q.q)+'<br><span class="muted">Antwoord: '+esc(l.q.full)+(l.correct?'':' · <a href="'+l.q.s[1]+'" target="_blank" rel="noopener noreferrer">bron</a>')+'</span></li>').join("")}
+$("go").onclick=begin;$("again").onclick=begin;$("check").onclick=check;$("skip").onclick=()=>finish(false,"");$("next").onclick=nextQ;
+$("ans").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();done?nextQ():check()}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&done&&document.activeElement!==$("next")&&!$("quiz").classList.contains("hide"))nextQ()});
+</script>
+</body>
+</html>
