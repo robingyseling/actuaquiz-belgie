@@ -48,9 +48,9 @@ ol.rev li{margin:.5em 0}
 <section id="start">
   <h1>Hoe goed volg jij het nieuws?</h1>
   <div class="card">
-    <p>100 open vragen over de actualiteit tussen <b>24 juli</b> en <b>24 oktober 2026</b>. Geen meerkeuze: typ zelf je antwoord en je ziet meteen of het klopt. Extra veel vragen gaan over namen en plaatsen.</p>
+    <p>100 open vragen over de actualiteit tussen <b>24 juli</b> en <b>24 oktober 2026</b>. Geen meerkeuze: typ zelf je antwoord en je ziet meteen of het klopt. Extra veel vragen gaan over namen en plaatsen. De helft gaat over internationaal nieuws, ook met Belgische bronnen.</p>
     <p class="muted ui" style="font-size:.9rem">Alle vragen zijn gebaseerd op Belgische nieuwssites (VRT NWS, Sporza, The Brussels Times). Bij een fout antwoord zie je de juiste oplossing én de bron.</p>
-    <div class="row"><button id="go">Start de quiz</button></div>
+    <p class="ui" id="mix" style="font-size:.9rem"></p><div class="row"><button id="go">Alle vragen</button><button id="goI" class="ghost">🌍 Enkel internationaal</button><button id="goB" class="ghost">🇧🇪 Enkel België</button></div>
   </div>
 </section>
 
@@ -223,6 +223,41 @@ P("groene trui in de Vuelta",{s:["Sporza: het Vuelta-rapport van de Belgen",VG]}
 P("debuut als bondscoach",{ex:"Zijn eerste selectie maakte hij op 18 september bekend."});
 P("Naar welke Olympische Spelen kijkt",{q:"Hoe oud is taekwondoka Sarah Chaari, de winnares van de Nationale Trofee voor Sportverdienste 2026?",h:"Antwoord in jaren",a:["21"],full:"21 jaar"});
 })();
+(function(){const R=k=>{const j=Q.findIndex(z=>z.q.includes(k));if(j>=0)Q.splice(j,1)};
+["stuwmeer van welke Oost-Belgische stad","vliegveld van welke Waalse stad","raadde zijn inwoners aan om binnen te blijven","transporthelikopter stuurde Nederland","landbouwmachine","Duitstalige Gemeenschap","overlegde met alle gouverneurs","Chinook-helikopters kopen","Hoeveel paarden","tekende samen met MEAU","jarenlange vaste presentator","hoeveelste editie van Pukkelpop","samen met de groep IJsland","BBC Sound of 2026","rockgroep van Tom Barman","gebroken been","N-VA-voorzitter wilde de btw-hervorming","hoogste btw-tarief (nu 21 procent)","Wetstraatjournalist van VRT NWS","MR-vicepremier zei dat de ambitie","schuldenrem","om 11 uur als eerste aan de beurt","begraven (Al-Amal","officieel ereteken","hoeveelste politieagent","wetsdokter"].forEach(R);
+["Wie won de slotrit van de Tour","Welke Belg werd tweede in het eindklassement","groene trui (puntenklassement) in de Tour","bergklassement (bollentrui)","wit van de beste jongere","ploegenklassement","eindigde de Vuelta","groene trui in de Vuelta","In welke Chinese stad","derde keer wereldkampioene","ploegmaat startte","omnium bij de mannen","veld van Inter","Welke trainer leidt Club Brugge","Zwitserse doelman","bij elke goal betrokken","Rode Duivels in Parijs","secretaris-generaal van de Koninklijke Zweedse Academie","IceCube-neutrinodetector","In welk land was Francis Halzen","Balkanland","Nederlandse provincie overleed","rookpluim van de Hoge Venen-brand","eerste Belgische Nobelprijswinnaar voor Natuurkunde"].forEach(k=>{const x=Q.find(z=>z.q.includes(k));if(x)x.i=true});
+const IS="https://www.vrt.be/vrtnws/nl/2026/09/13/israel-op-een-kruispunt-wat-staat-er-op-het-spel-bij-de-komend/",ML="https://www.vrt.be/vrtnws/nl/liveblog/burgemeester-new-york-wil-dat-amerikaanse-regering-netanyahu-opp~1761226560191/",MH="https://www.vrt.be/vrtnws/nl/liveblog/minstens-11-doden-onder-wie-meerdere-kinderen-bij-israelische-~1761226560191/",UA="https://www.vrt.be/vrtnws/nl/liveblog/zelensky-verkiezingen-zouden-tsunami-zijn-die-oekraine-zou-ver~1781787179742.consumer/",NB="https://www.vrt.be/vrtnws/nl/liveblog/nobelprijs-voor-scheikunde-naar-fransman-en-japanner-voor-onderz~1759742249381/",SW="https://www.vrt.be/vrtnws/nl/2026/09/13/parlementsverkiezingen-zweden/",SV="https://www.vrt.be/vrtnws/nl/2026/09/11/zweden-parlementsverkiezingen-voorbeschouwing/";
+const I=(d,q,a,full,s,h)=>Q.push({i:true,d,q,a,full,s,h});
+I("13 september 2026","Op welke dag in oktober trekt Israël naar de stembus voor parlementsverkiezingen?",["27","27 oktober"],"27 oktober",[VRT+": Israël op een kruispunt",IS],"Antwoord als datum");
+I("13 september 2026","Welke Israëlische premier, de langstzittende ooit, stelt zich opnieuw kandidaat?",["netanyahu","benjamin netanyahu"],"Benjamin Netanyahu",[VRT+": Israël op een kruispunt",IS]);
+I("13 september 2026","Noem één van de twee politici die, naast Netanyahu, als mogelijke nieuwe premier van Israël worden genoemd.",["eisenkot","gadi eisenkot","bennett","naftali bennett"],"Eisenkot of Bennett",[VRT+": Israël op een kruispunt",IS]);
+I("Zomer 2026","Welke burgemeester van New York wil dat de Amerikaanse regering Netanyahu arresteert als hij naar de VN-top in september komt?",["zohran mamdani","mamdani"],"Zohran Mamdani",[VRT+" liveblog: Midden-Oosten",ML]);
+I("Zomer 2026","Welke Amerikaanse minister van Defensie annuleerde zijn eerste reis naar Israël door de spanningen tussen Iran en de VS?",["hegseth","pete hegseth"],"Pete Hegseth",[VRT+" liveblog: Midden-Oosten",MH]);
+I("Zomer 2026","Welke Amerikaanse vicepresident beschuldigde Israëlische regeringsleden ervan een deal met Iran te boycotten?",["jd vance","vance","j d vance"],"JD Vance",[VRT+" liveblog: Midden-Oosten",MH]);
+I("Zomer 2026","Welk land stond centraal in de spanningen met de VS die Hegseth zijn reis naar Israël deden annuleren?",["iran"],"Iran",[VRT+" liveblog: Midden-Oosten",MH]);
+I("Zomer 2026","Hoe oud is Benjamin Netanyahu volgens de VRT NWS-liveblog?",["76"],"76 jaar",[VRT+" liveblog: Midden-Oosten",MH],"Antwoord in jaren");
+I("Augustus 2026","In welke Oekraïense stad, de geboortestad van Zelensky, werd een winkelcentrum gebombardeerd?",["kryvy rih","kryvyi rih","kryvij rih"],"Kryvy Rih",[VRT+" liveblog: oorlog in Oekraïne",UA]);
+I("Augustus 2026","Hoeveel burgers kwamen volgens Oekraïne-expert Marijn Trio in juli 2026 om, de dodelijkste maand sinds het begin van de oorlog?",["400"],"Meer dan 400",[VRT+" liveblog: oorlog in Oekraïne",UA],"Antwoord in cijfers");
+I("Augustus 2026","Met welk natuurverschijnsel vergeleek Zelensky verkiezingen in oorlogstijd?",["tsunami"],"Een tsunami",[VRT+" liveblog: oorlog in Oekraïne",UA]);
+I("Augustus 2026","Welke mythologische ‘doos’ zou Oekraïne volgens Poetin hebben geopend met zijn aanvallen?",["pandora","doos van pandora"],"De doos van Pandora",[VRT+" liveblog: oorlog in Oekraïne",UA]);
+I("7 oktober 2026","Welke Franse chemicus won samen met Kenso Soai de Nobelprijs voor Scheikunde 2026?",["henri kagan","kagan"],"Henri Kagan",[VRT+" liveblog: Nobelprijs Scheikunde",NB]);
+I("7 oktober 2026","Uit welk land komt Nobelprijswinnaar Scheikunde Kenso Soai?",["japan"],"Japan",[VRT+" liveblog: Nobelprijs Scheikunde",NB]);
+I("7 oktober 2026","Over welk onderwerp ging het onderzoek dat de Nobelprijs voor Scheikunde 2026 kreeg?",["spiegelbeelden","chemische spiegelbeelden"],"Chemische spiegelbeelden",[VRT+" liveblog: Nobelprijs Scheikunde",NB]);
+I("7 oktober 2026","Hoeveel miljoen Zweedse kroon ontvangt elke Nobelprijswinnaar?",["12","twaalf"],"12 miljoen (ongeveer 1 miljoen euro)",[VRT+" liveblog: Nobelprijs Scheikunde",NB],"Antwoord in cijfers");
+I("13 september 2026","Welke conservatief-liberale premier van Zweden hoopte bij de parlementsverkiezingen aan de macht te blijven?",["ulf kristersson","kristersson"],"Ulf Kristersson",[VRT+": parlementsverkiezingen in Zweden",SW]);
+I("13 september 2026","Welke voormalige Zweedse premier leidde het linkse blok?",["magdalena andersson","andersson"],"Magdalena Andersson",[VRT+": parlementsverkiezingen in Zweden",SW]);
+I("13 september 2026","Welke radicaal-rechtse partij wilde bij een rechtse zege voor het eerst in de Zweedse regering?",["zweden democraten","sverigedemokraterna"],"De Zweden-Democraten",[VRT+": parlementsverkiezingen in Zweden",SW]);
+I("11 september 2026","Wie is de leider van de Zweden-Democraten, die zelf premier wil worden maar op 2030 of later mikt?",["akesson","jimmie akesson"],"Jimmie Åkesson",[VRT+": voorbeschouwing Zweedse verkiezingen",SV]);
+I("13 september 2026","Hoeveel procent bedroeg de opkomst bij de vorige Zweedse parlementsverkiezingen?",["84"],"84 procent",[VRT+": parlementsverkiezingen in Zweden",SW],"Antwoord in procent");
+I("13 september 2026","Hoeveel zetels scheidden de twee blokken in de eerste cijfers van de Zweedse verkiezingen?",["1","een","één"],"Slechts 1 zetel",[VRT+": parlementsverkiezingen in Zweden",SW],"Antwoord in cijfers");
+I("13 september 2026","Hoeveel stemmen verschil voorspelde de exitpoll van de Zweedse openbare omroep SVT tussen de blokken?",["20000","20.000","20 000"],"20.000 stemmen",[VRT+": parlementsverkiezingen in Zweden",SW],"Antwoord in cijfers");
+I("10 september 2026","Hoeveel doden telde Nederland begin september door het westnijlvirus?",["3","drie"],"3 (bij 18 besmettingen)",[VRT+": 18 besmettingen en 3 doden in Nederland","https://www.vrt.be/vrtnws/nl/2026/09/10/18-besmettingen-en-3-doden-door-westnijlvirus-in-nederland-bij/"],"Antwoord in cijfers");
+I("11 september 2026","Tot welke partij behoort de Zweedse premier Kristersson (naam van de partij)?",["moderaten","moderata"],"De Moderaten",[VRT+": belangrijke verkiezingen in 2026","https://www.vrt.be/vrtnws/nl/2025/12/31/belangrijke-verkiezingen-in-2026-israel-amerika-brazilie-oekr/"]);
+I("Zomer 2026","In welke Amerikaanse stad zou Netanyahu in september naar de Algemene Vergadering van de Verenigde Naties komen?",["new york"],"New York",[VRT+" liveblog: Midden-Oosten",ML]);
+Q.push({d:"Augustus 2026",q:"Op het vliegveld van welke Waalse stad stond de VRT NWS-journaliste tijdens de bluswerken aan de Hoge Venen?",a:["spa"],full:"Spa",s:[VRT+" liveblog: Hoge Venen","https://www.vrt.be/vrtnws/nl/liveblog/brand-breidt-voorlopig-niet-uit-maar-zodra-regen-stopt-flakke~1785314118283/"]});
+})();
+(function(){const j=Q.findIndex(z=>z.q.includes("verkeersinstituut Vias"));if(j>=0)Q.splice(j,1);
+Q.push({d:"Oktober 2026",q:"Welke Vooruit-minister was om 11 uur als eerste aan de beurt toen de federale begrotingsgesprekken met De Wever werden hervat?",a:["frank vandenbroucke","vandenbroucke"],full:"Frank Vandenbroucke",s:[VRT+" liveblog: De Wever schrapt btw in nieuw voorstel",FW]});})();
 const $=id=>document.getElementById(id);
 let order,i,pts,log,done;
 const norm=t=>t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/(\d),(\d)/g,"$1.$2").replace(/[^a-z0-9.]/g," ").replace(/(^|\s)\.+|\.+(?=\s|$)/g," ").replace(/\s+/g," ").trim();
@@ -230,17 +265,17 @@ function lev(a,b){const m=[...Array(b.length+1).keys()];for(let x=1;x<=a.length;
 function ok(u,list){u=norm(u);if(!u)return false;return list.some(a=>{a=norm(a);return u===a||(" "+u+" ").includes(" "+a+" ")||(a.length>=7&&lev(u,a)<=1)})}
 function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
 function show(id){["start","quiz","end"].forEach(s=>$(s).classList.toggle("hide",s!==id))}
-function begin(){order=shuffle(Q);i=0;pts=0;log=[];show("quiz");load()}
-function load(){const q=order[i];done=false;$("num").textContent="Vraag "+(i+1)+" van "+order.length;$("score").textContent="Score: "+pts;$("prog").style.width=(i/order.length*100)+"%";$("date").textContent=q.d;$("qtext").textContent=q.q;$("hint").textContent=q.h;$("fb").innerHTML="";const a=$("ans");a.value="";a.disabled=false;$("check").classList.remove("hide");$("skip").classList.remove("hide");$("next").classList.add("hide");a.focus()}
+let lm;function begin(m){lm=m;order=shuffle(m==="i"?Q.filter(x=>x.i):m==="b"?Q.filter(x=>!x.i):Q);i=0;pts=0;log=[];show("quiz");load()}
+function load(){const q=order[i];done=false;$("num").textContent="Vraag "+(i+1)+" van "+order.length;$("score").textContent="Score: "+pts;$("prog").style.width=(i/order.length*100)+"%";$("date").textContent=(q.i?"🌍 Internationaal · ":"🇧🇪 België · ")+q.d;$("qtext").textContent=q.q;$("hint").textContent=q.h;$("fb").innerHTML="";const a=$("ans");a.value="";a.disabled=false;$("check").classList.remove("hide");$("skip").classList.remove("hide");$("next").classList.add("hide");a.focus()}
 function esc(t){const d=document.createElement("div");d.textContent=t||"";return d.innerHTML}
 function finish(correct,given){if(done)return;done=true;const q=order[i];$("ans").disabled=true;$("check").classList.add("hide");$("skip").classList.add("hide");$("next").classList.remove("hide");if(correct)pts++;log.push({q,correct,given});$("score").textContent="Score: "+pts;
 $("fb").innerHTML=correct?'<div class="fb ok"><b>Juist! ✓</b><p>'+esc(q.full)+'</p><p>'+esc(q.ex)+'</p></div>':'<div class="fb bad"><b>Helaas, dat klopt niet ✗</b><p>Het juiste antwoord: <b style="display:inline">'+esc(q.full)+'</b></p><p>'+esc(q.ex)+'</p><p>Bron: <a href="'+q.s[1]+'" target="_blank" rel="noopener noreferrer">'+esc(q.s[0])+'</a></p></div>';
 $("next").focus()}
 function check(){if(done)return;const v=$("ans").value.trim();if(!v){$("ans").focus();return}finish(ok(v,order[i].a),v)}
 function nextQ(){i++;if(i>=order.length)return end();load()}
-function end(){show("end");$("final").textContent=pts+" / "+order.length;$("verdict").textContent=pts>=80?"Indrukwekkend: je bent echt mee met de actualiteit!":pts>=56?"Sterk gespeeld, je volgt het nieuws goed.":pts>=30?"Niet slecht, maar er valt nog wat bij te leren.":"Tijd om de nieuwssites eens te openen!";
+function end(){show("end");$("final").textContent=pts+" / "+order.length;$("verdict").textContent=pts>=order.length*.8?"Indrukwekkend: je bent echt mee met de actualiteit!":pts>=order.length*.56?"Sterk gespeeld, je volgt het nieuws goed.":pts>=order.length*.3?"Niet slecht, maar er valt nog wat bij te leren.":"Tijd om de nieuwssites eens te openen!";
 $("rev").innerHTML=log.map(l=>'<li>'+(l.correct?'✓ ':'✗ ')+esc(l.q.q)+'<br><span class="muted">Antwoord: '+esc(l.q.full)+(l.correct?'':' · <a href="'+l.q.s[1]+'" target="_blank" rel="noopener noreferrer">bron</a>')+'</span></li>').join("")}
-$("go").onclick=begin;$("again").onclick=begin;$("check").onclick=check;$("skip").onclick=()=>finish(false,"");$("next").onclick=nextQ;
+$("go").onclick=()=>begin();$("goI").onclick=()=>begin("i");$("goB").onclick=()=>begin("b");$("again").onclick=()=>begin(lm);$("mix").textContent=Q.filter(x=>x.i).length+" internationale en "+Q.filter(x=>!x.i).length+" Belgische vragen. Kies hieronder welke je wilt spelen.";$("check").onclick=check;$("skip").onclick=()=>finish(false,"");$("next").onclick=nextQ;
 $("ans").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();done?nextQ():check()}});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&done&&document.activeElement!==$("next")&&!$("quiz").classList.contains("hide"))nextQ()});
 </script>
