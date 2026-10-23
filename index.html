@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Actuaquiz België</title>
+<title>Voorbereiding Sjaloomkwis</title>
 <style>
 :root{--bg:#f6f4ef;--card:#fff;--fg:#1d1d1b;--muted:#6b6a64;--line:#e2dfd6;--accent:#c8102e;--accent-fg:#fff;--ok:#1b7a43;--ok-bg:#e4f4ea;--bad:#b3261e;--bad-bg:#fbe9e7;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171716;--card:#232321;--fg:#f1efe8;--muted:#a09e95;--line:#3a3935;--accent:#ff4d62;--accent-fg:#1a0004;--ok:#6fd49a;--ok-bg:#16301f;--bad:#ff8d85;--bad-bg:#3a1b19;color-scheme:dark}}
@@ -46,11 +46,11 @@ ol.rev li{margin:.5em 0}
 <div class="kicker ui">Actuaquiz · Belgisch nieuws</div>
 
 <section id="start">
-  <h1>Hoe goed volg jij het nieuws?</h1>
+  <h1>Voorbereiding Sjaloomkwis</h1>
   <div class="card">
-    <p>100 open vragen over de actualiteit tussen <b>24 juli</b> en <b>24 oktober 2026</b>. Geen meerkeuze: typ zelf je antwoord en je ziet meteen of het klopt. Extra veel vragen gaan over namen en plaatsen. De helft gaat over internationaal nieuws, ook met Belgische bronnen.</p>
-    <p class="muted ui" style="font-size:.9rem">Alle vragen zijn gebaseerd op Belgische nieuwssites (VRT NWS, Sporza, The Brussels Times). Bij een fout antwoord zie je de juiste oplossing én de bron.</p>
-    <p class="ui" id="mix" style="font-size:.9rem"></p><div class="row"><button id="go">Alle vragen</button><button id="goI" class="ghost">🌍 Enkel internationaal</button><button id="goB" class="ghost">🇧🇪 Enkel België</button></div>
+    <p>100 vragen over de actualiteit van 24 juli tot 22 oktober.</p>
+    <p class="muted ui" style="font-size:.9rem">Alle vragen zijn gebaseerd op Belgische nieuwssites (VRT NWS, Sporza, The Brussels Times). Bij elk antwoord, juist of fout, zie je de bron. In de modus ‘Alle vragen’ wisselen internationale en Belgische vragen elkaar af.</p>
+    <p class="ui" id="mix" style="display:none"></p><div class="row"><button id="go">Alle vragen</button><button id="goI" class="ghost">🌍 Enkel internationaal</button><button id="goB" class="ghost">🇧🇪 Enkel België</button></div>
   </div>
 </section>
 
@@ -265,16 +265,16 @@ function lev(a,b){const m=[...Array(b.length+1).keys()];for(let x=1;x<=a.length;
 function ok(u,list){u=norm(u);if(!u)return false;return list.some(a=>{a=norm(a);return u===a||(" "+u+" ").includes(" "+a+" ")||(a.length>=7&&lev(u,a)<=1)})}
 function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
 function show(id){["start","quiz","end"].forEach(s=>$(s).classList.toggle("hide",s!==id))}
-let lm;function begin(m){lm=m;order=shuffle(m==="i"?Q.filter(x=>x.i):m==="b"?Q.filter(x=>!x.i):Q);i=0;pts=0;log=[];show("quiz");load()}
+let lm;function begin(m){lm=m;const A=shuffle(Q.filter(x=>x.i)),B=shuffle(Q.filter(x=>!x.i));order=m==="i"?A:m==="b"?B:[];if(!m){for(let k=0;k<Math.max(A.length,B.length);k++){if(A[k])order.push(A[k]);if(B[k])order.push(B[k])}}i=0;pts=0;log=[];show("quiz");load()}
 function load(){const q=order[i];done=false;$("num").textContent="Vraag "+(i+1)+" van "+order.length;$("score").textContent="Score: "+pts;$("prog").style.width=(i/order.length*100)+"%";$("date").textContent=(q.i?"🌍 Internationaal · ":"🇧🇪 België · ")+q.d;$("qtext").textContent=q.q;$("hint").textContent=q.h;$("fb").innerHTML="";const a=$("ans");a.value="";a.disabled=false;$("check").classList.remove("hide");$("skip").classList.remove("hide");$("next").classList.add("hide");a.focus()}
 function esc(t){const d=document.createElement("div");d.textContent=t||"";return d.innerHTML}
 function finish(correct,given){if(done)return;done=true;const q=order[i];$("ans").disabled=true;$("check").classList.add("hide");$("skip").classList.add("hide");$("next").classList.remove("hide");if(correct)pts++;log.push({q,correct,given});$("score").textContent="Score: "+pts;
-$("fb").innerHTML=correct?'<div class="fb ok"><b>Juist! ✓</b><p>'+esc(q.full)+'</p><p>'+esc(q.ex)+'</p></div>':'<div class="fb bad"><b>Helaas, dat klopt niet ✗</b><p>Het juiste antwoord: <b style="display:inline">'+esc(q.full)+'</b></p><p>'+esc(q.ex)+'</p><p>Bron: <a href="'+q.s[1]+'" target="_blank" rel="noopener noreferrer">'+esc(q.s[0])+'</a></p></div>';
+$("fb").innerHTML=correct?'<div class="fb ok"><b>Juist! ✓</b><p>'+esc(q.full)+'</p><p>'+esc(q.ex)+'</p><p>Bron: <a href="'+q.s[1]+'" target="_blank" rel="noopener noreferrer">'+esc(q.s[0])+'</a></p></div>':'<div class="fb bad"><b>Helaas, dat klopt niet ✗</b><p>Het juiste antwoord: <b style="display:inline">'+esc(q.full)+'</b></p><p>'+esc(q.ex)+'</p><p>Bron: <a href="'+q.s[1]+'" target="_blank" rel="noopener noreferrer">'+esc(q.s[0])+'</a></p></div>';
 $("next").focus()}
 function check(){if(done)return;const v=$("ans").value.trim();if(!v){$("ans").focus();return}finish(ok(v,order[i].a),v)}
 function nextQ(){i++;if(i>=order.length)return end();load()}
 function end(){show("end");$("final").textContent=pts+" / "+order.length;$("verdict").textContent=pts>=order.length*.8?"Indrukwekkend: je bent echt mee met de actualiteit!":pts>=order.length*.56?"Sterk gespeeld, je volgt het nieuws goed.":pts>=order.length*.3?"Niet slecht, maar er valt nog wat bij te leren.":"Tijd om de nieuwssites eens te openen!";
-$("rev").innerHTML=log.map(l=>'<li>'+(l.correct?'✓ ':'✗ ')+esc(l.q.q)+'<br><span class="muted">Antwoord: '+esc(l.q.full)+(l.correct?'':' · <a href="'+l.q.s[1]+'" target="_blank" rel="noopener noreferrer">bron</a>')+'</span></li>').join("")}
+$("rev").innerHTML=log.map(l=>'<li>'+(l.correct?'✓ ':'✗ ')+esc(l.q.q)+'<br><span class="muted">Antwoord: '+esc(l.q.full)+' · <a href="'+l.q.s[1]+'" target="_blank" rel="noopener noreferrer">bron</a>'+'</span></li>').join("")}
 $("go").onclick=()=>begin();$("goI").onclick=()=>begin("i");$("goB").onclick=()=>begin("b");$("again").onclick=()=>begin(lm);$("mix").textContent=Q.filter(x=>x.i).length+" internationale en "+Q.filter(x=>!x.i).length+" Belgische vragen. Kies hieronder welke je wilt spelen.";$("check").onclick=check;$("skip").onclick=()=>finish(false,"");$("next").onclick=nextQ;
 $("ans").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();done?nextQ():check()}});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&done&&document.activeElement!==$("next")&&!$("quiz").classList.contains("hide"))nextQ()});
